@@ -152,7 +152,8 @@ function AdminPage() {
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-semibold">Store Admin</h1>
         <span className="text-sm text-muted-foreground">{user.email}</span>
-        <Button variant="ghost" size="sm" className="ml-auto" onClick={() => supabase.auth.signOut()}>Sign out</Button>
+        <Button asChild variant="outline" size="sm" className="ml-auto"><Link to="/admin/import">Import Products</Link></Button>
+        <Button variant="ghost" size="sm" onClick={() => supabase.auth.signOut()}>Sign out</Button>
       </div>
 
       <Tabs defaultValue="dashboard" className="mt-6">
