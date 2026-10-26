@@ -16,6 +16,7 @@ import { Route as PoliciesRouteImport } from './routes/policies'
 import { Route as TrackRouteImport } from './routes/track'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as AuthenticatedAdminImportRouteImport } from './routes/_authenticated/admin_.import'
 import { Route as ApiPublicBannerImgRouteImport } from './routes/api/public/banner-img'
 import { Route as ApiPublicImgRouteImport } from './routes/api/public/img'
 import { Route as ApiPublicImportProductRouteImport } from './routes/api/public/import-product'
@@ -56,6 +57,12 @@ const ProductIdRoute = ProductIdRouteImport.update({
   path: '/product/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminImportRoute =
+  AuthenticatedAdminImportRouteImport.update({
+    id: '/admin_/import',
+    path: '/admin/import',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicBannerImgRoute = ApiPublicBannerImgRouteImport.update({
   id: '/api/public/banner-img',
   path: '/api/public/banner-img',
@@ -89,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/track': typeof TrackRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/product/$id': typeof ProductIdRoute
+  '/admin/import': typeof AuthenticatedAdminImportRoute
   '/api/public/banner-img': typeof ApiPublicBannerImgRoute
   '/api/public/img': typeof ApiPublicImgRoute
   '/api/public/import-product': typeof ApiPublicImportProductRoute
@@ -102,6 +110,7 @@ export interface FileRoutesByTo {
   '/track': typeof TrackRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/product/$id': typeof ProductIdRoute
+  '/admin/import': typeof AuthenticatedAdminImportRoute
   '/api/public/banner-img': typeof ApiPublicBannerImgRoute
   '/api/public/img': typeof ApiPublicImgRoute
   '/api/public/import-product': typeof ApiPublicImportProductRoute
@@ -117,6 +126,7 @@ export interface FileRoutesById {
   '/track': typeof TrackRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/product/$id': typeof ProductIdRoute
+  '/_authenticated/admin_/import': typeof AuthenticatedAdminImportRoute
   '/api/public/banner-img': typeof ApiPublicBannerImgRoute
   '/api/public/img': typeof ApiPublicImgRoute
   '/api/public/import-product': typeof ApiPublicImportProductRoute
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/admin'
     | '/product/$id'
+    | '/admin/import'
     | '/api/public/banner-img'
     | '/api/public/img'
     | '/api/public/import-product'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/admin'
     | '/product/$id'
+    | '/admin/import'
     | '/api/public/banner-img'
     | '/api/public/img'
     | '/api/public/import-product'
@@ -159,6 +171,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/_authenticated/admin'
     | '/product/$id'
+    | '/_authenticated/admin_/import'
     | '/api/public/banner-img'
     | '/api/public/img'
     | '/api/public/import-product'
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin_/import': {
+      id: '/_authenticated/admin_/import'
+      path: '/admin/import'
+      fullPath: '/admin/import'
+      preLoaderRoute: typeof AuthenticatedAdminImportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/banner-img': {
       id: '/api/public/banner-img'
       path: '/api/public/banner-img'
@@ -271,10 +291,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminImportRoute: typeof AuthenticatedAdminImportRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminImportRoute: AuthenticatedAdminImportRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
