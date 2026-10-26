@@ -46,6 +46,9 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // Lets background jobs keep running after their response is sent (Cloudflare waitUntil).
+    const wu = (ctx as { waitUntil?: (p: Promise<unknown>) => void } | undefined)?.waitUntil;
+    if (wu) (globalThis as { __waitUntil?: (p: Promise<unknown>) => void }).__waitUntil = wu.bind(ctx);
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

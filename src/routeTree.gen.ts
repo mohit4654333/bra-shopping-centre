@@ -10,33 +10,174 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PoliciesRouteImport } from './routes/policies'
+import { Route as TrackRouteImport } from './routes/track'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as ApiPublicBannerImgRouteImport } from './routes/api/public/banner-img'
+import { Route as ApiPublicImgRouteImport } from './routes/api/public/img'
+import { Route as ApiPublicImportProductRouteImport } from './routes/api/public/import-product'
+import { Route as ApiPublicReviewImgRouteImport } from './routes/api/public/review-img'
+import { Route as ApiPublicJobsAutopilotRouteImport } from './routes/api/public/jobs/autopilot'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PoliciesRoute = PoliciesRouteImport.update({
+  id: '/policies',
+  path: '/policies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ProductIdRoute = ProductIdRouteImport.update({
+  id: '/product/$id',
+  path: '/product/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicBannerImgRoute = ApiPublicBannerImgRouteImport.update({
+  id: '/api/public/banner-img',
+  path: '/api/public/banner-img',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicImgRoute = ApiPublicImgRouteImport.update({
+  id: '/api/public/img',
+  path: '/api/public/img',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicImportProductRoute = ApiPublicImportProductRouteImport.update({
+  id: '/api/public/import-product',
+  path: '/api/public/import-product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicReviewImgRoute = ApiPublicReviewImgRouteImport.update({
+  id: '/api/public/review-img',
+  path: '/api/public/review-img',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicJobsAutopilotRoute = ApiPublicJobsAutopilotRouteImport.update({
+  id: '/api/public/jobs/autopilot',
+  path: '/api/public/jobs/autopilot',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/policies': typeof PoliciesRoute
+  '/track': typeof TrackRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/product/$id': typeof ProductIdRoute
+  '/api/public/banner-img': typeof ApiPublicBannerImgRoute
+  '/api/public/img': typeof ApiPublicImgRoute
+  '/api/public/import-product': typeof ApiPublicImportProductRoute
+  '/api/public/review-img': typeof ApiPublicReviewImgRoute
+  '/api/public/jobs/autopilot': typeof ApiPublicJobsAutopilotRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/policies': typeof PoliciesRoute
+  '/track': typeof TrackRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/product/$id': typeof ProductIdRoute
+  '/api/public/banner-img': typeof ApiPublicBannerImgRoute
+  '/api/public/img': typeof ApiPublicImgRoute
+  '/api/public/import-product': typeof ApiPublicImportProductRoute
+  '/api/public/review-img': typeof ApiPublicReviewImgRoute
+  '/api/public/jobs/autopilot': typeof ApiPublicJobsAutopilotRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/policies': typeof PoliciesRoute
+  '/track': typeof TrackRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/product/$id': typeof ProductIdRoute
+  '/api/public/banner-img': typeof ApiPublicBannerImgRoute
+  '/api/public/img': typeof ApiPublicImgRoute
+  '/api/public/import-product': typeof ApiPublicImportProductRoute
+  '/api/public/review-img': typeof ApiPublicReviewImgRoute
+  '/api/public/jobs/autopilot': typeof ApiPublicJobsAutopilotRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/policies'
+    | '/track'
+    | '/admin'
+    | '/product/$id'
+    | '/api/public/banner-img'
+    | '/api/public/img'
+    | '/api/public/import-product'
+    | '/api/public/review-img'
+    | '/api/public/jobs/autopilot'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/policies'
+    | '/track'
+    | '/admin'
+    | '/product/$id'
+    | '/api/public/banner-img'
+    | '/api/public/img'
+    | '/api/public/import-product'
+    | '/api/public/review-img'
+    | '/api/public/jobs/autopilot'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/policies'
+    | '/track'
+    | '/_authenticated/admin'
+    | '/product/$id'
+    | '/api/public/banner-img'
+    | '/api/public/img'
+    | '/api/public/import-product'
+    | '/api/public/review-img'
+    | '/api/public/jobs/autopilot'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  PoliciesRoute: typeof PoliciesRoute
+  TrackRoute: typeof TrackRoute
+  ProductIdRoute: typeof ProductIdRoute
+  ApiPublicBannerImgRoute: typeof ApiPublicBannerImgRoute
+  ApiPublicImgRoute: typeof ApiPublicImgRoute
+  ApiPublicImportProductRoute: typeof ApiPublicImportProductRoute
+  ApiPublicReviewImgRoute: typeof ApiPublicReviewImgRoute
+  ApiPublicJobsAutopilotRoute: typeof ApiPublicJobsAutopilotRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +189,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policies': {
+      id: '/policies'
+      path: '/policies'
+      fullPath: '/policies'
+      preLoaderRoute: typeof PoliciesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/product/$id': {
+      id: '/product/$id'
+      path: '/product/$id'
+      fullPath: '/product/$id'
+      preLoaderRoute: typeof ProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/banner-img': {
+      id: '/api/public/banner-img'
+      path: '/api/public/banner-img'
+      fullPath: '/api/public/banner-img'
+      preLoaderRoute: typeof ApiPublicBannerImgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/img': {
+      id: '/api/public/img'
+      path: '/api/public/img'
+      fullPath: '/api/public/img'
+      preLoaderRoute: typeof ApiPublicImgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/import-product': {
+      id: '/api/public/import-product'
+      path: '/api/public/import-product'
+      fullPath: '/api/public/import-product'
+      preLoaderRoute: typeof ApiPublicImportProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/review-img': {
+      id: '/api/public/review-img'
+      path: '/api/public/review-img'
+      fullPath: '/api/public/review-img'
+      preLoaderRoute: typeof ApiPublicReviewImgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/jobs/autopilot': {
+      id: '/api/public/jobs/autopilot'
+      path: '/api/public/jobs/autopilot'
+      fullPath: '/api/public/jobs/autopilot'
+      preLoaderRoute: typeof ApiPublicJobsAutopilotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  PoliciesRoute: PoliciesRoute,
+  TrackRoute: TrackRoute,
+  ProductIdRoute: ProductIdRoute,
+  ApiPublicBannerImgRoute: ApiPublicBannerImgRoute,
+  ApiPublicImgRoute: ApiPublicImgRoute,
+  ApiPublicImportProductRoute: ApiPublicImportProductRoute,
+  ApiPublicReviewImgRoute: ApiPublicReviewImgRoute,
+  ApiPublicJobsAutopilotRoute: ApiPublicJobsAutopilotRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

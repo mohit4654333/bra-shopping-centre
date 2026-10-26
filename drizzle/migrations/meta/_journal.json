@@ -1,0 +1,90 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792775339358,
+      "tag": "0000_import_glamour_store",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792775413932,
+      "tag": "0001_catalog_variants_and_dump_bot",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792803871758,
+      "tag": "0002_seed_core_colours_with_photos",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792845263699,
+      "tag": "0003_autopilot_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792891435356,
+      "tag": "0004_store_ready",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792927674500,
+      "tag": "0005_categories_sort_hint",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792958528264,
+      "tag": "0006_autopilot_speed_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792980257965,
+      "tag": "0007_seed_model_catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793003178514,
+      "tag": "0008_model_catalog_loader_v2",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793004327688,
+      "tag": "0009_pin_sort_combos",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793007089652,
+      "tag": "0010_model_catalog_from_real_photos",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793007804973,
+      "tag": "0011_model_catalog_photo_fallback",
+      "breakpoints": true
+    }
+  ]
+}

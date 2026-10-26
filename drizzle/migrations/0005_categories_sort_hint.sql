@@ -1,0 +1,1 @@
+COMMENT ON TABLE public.categories IS 'Store categories (admins can add more)';
