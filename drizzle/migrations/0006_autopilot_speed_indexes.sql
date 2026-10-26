@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS import_channels_autopilot_idx ON public.import_channels(autopilot);
