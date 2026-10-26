@@ -44,6 +44,30 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_settings: {
+        Row: {
+          api_keys: Json
+          id: string
+          qr_image_url: string
+          updated_at: string
+          upi_id: string
+        }
+        Insert: {
+          api_keys?: Json
+          id?: string
+          qr_image_url?: string
+          updated_at?: string
+          upi_id?: string
+        }
+        Update: {
+          api_keys?: Json
+          id?: string
+          qr_image_url?: string
+          updated_at?: string
+          upi_id?: string
+        }
+        Relationships: []
+      }
       app_secrets: {
         Row: {
           name: string
@@ -102,17 +126,29 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          image_url: string
+          is_active: boolean
           label: string
+          slug: string
+          sort: number
         }
         Insert: {
           created_at?: string
           id: string
+          image_url?: string
+          is_active?: boolean
           label: string
+          slug: string
+          sort?: number
         }
         Update: {
           created_at?: string
           id?: string
+          image_url?: string
+          is_active?: boolean
           label?: string
+          slug?: string
+          sort?: number
         }
         Relationships: []
       }
@@ -145,33 +181,48 @@ export type Database = {
       }
       import_channels: {
         Row: {
+          autopilot: boolean
           category: string
           created_at: string
+          dry_scans: number
           id: string
           imported_count: number
           label: string
+          last_error: string | null
+          last_run: string | null
           last_scanned_page: number
           last_sync_timestamp: string | null
+          pending_urls: string[]
           url: string
         }
         Insert: {
+          autopilot?: boolean
           category?: string
           created_at?: string
+          dry_scans?: number
           id?: string
           imported_count?: number
           label: string
+          last_error?: string | null
+          last_run?: string | null
           last_scanned_page?: number
           last_sync_timestamp?: string | null
+          pending_urls?: string[]
           url: string
         }
         Update: {
+          autopilot?: boolean
           category?: string
           created_at?: string
+          dry_scans?: number
           id?: string
           imported_count?: number
           label?: string
+          last_error?: string | null
+          last_run?: string | null
           last_scanned_page?: number
           last_sync_timestamp?: string | null
+          pending_urls?: string[]
           url?: string
         }
         Relationships: []
@@ -215,6 +266,47 @@ export type Database = {
         }
         Relationships: []
       }
+      product_variants: {
+        Row: {
+          available_sizes: string[]
+          color_hex: string
+          color_name: string
+          created_at: string
+          id: string
+          model_photos: string[]
+          product_id: string
+          sort: number
+        }
+        Insert: {
+          available_sizes?: string[]
+          color_hex?: string
+          color_name: string
+          created_at?: string
+          id?: string
+          model_photos?: string[]
+          product_id: string
+          sort?: number
+        }
+        Update: {
+          available_sizes?: string[]
+          color_hex?: string
+          color_name?: string
+          created_at?: string
+          id?: string
+          model_photos?: string[]
+          product_id?: string
+          sort?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           badge: string
@@ -224,14 +316,19 @@ export type Database = {
           created_at: string
           description: string
           discount_percent: number | null
+          fabric_details: string
           featured: boolean
           highlights: string[]
           id: string
           images: string[]
+          is_active: boolean
+          is_bestseller: boolean
           name: string
           old_price: number
+          pinned: boolean
           price: number
           sizes: string[]
+          slug: string | null
           source_url: string
           specs: Json
         }
@@ -243,14 +340,19 @@ export type Database = {
           created_at?: string
           description?: string
           discount_percent?: number | null
+          fabric_details?: string
           featured?: boolean
           highlights?: string[]
           id?: string
           images?: string[]
+          is_active?: boolean
+          is_bestseller?: boolean
           name: string
           old_price?: number
+          pinned?: boolean
           price?: number
           sizes?: string[]
+          slug?: string | null
           source_url?: string
           specs?: Json
         }
@@ -262,14 +364,19 @@ export type Database = {
           created_at?: string
           description?: string
           discount_percent?: number | null
+          fabric_details?: string
           featured?: boolean
           highlights?: string[]
           id?: string
           images?: string[]
+          is_active?: boolean
+          is_bestseller?: boolean
           name?: string
           old_price?: number
+          pinned?: boolean
           price?: number
           sizes?: string[]
+          slug?: string | null
           source_url?: string
           specs?: Json
         }
@@ -421,6 +528,8 @@ export type Database = {
     }
     Functions: {
       apply_bulk_discount: { Args: { _percent: number }; Returns: number }
+      clear_catalog: { Args: never; Returns: number }
+      clear_model_seed: { Args: never; Returns: number }
       create_order: {
         Args: {
           _address: string
@@ -467,6 +576,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      seed_catalog_category: {
+        Args: { _cat: string; _n: number }
+        Returns: number
+      }
+      seed_categories: { Args: never; Returns: number }
+      seed_model_catalog:
+        | { Args: { _cat: string; _n: number }; Returns: number }
+        | { Args: { _cat: string; _n: number; _photos: Json }; Returns: number }
       track_orders: {
         Args: { _code: string; _phone: string }
         Returns: {
