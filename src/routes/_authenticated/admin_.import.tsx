@@ -161,3 +161,13 @@ function Stat({ label, value, accent }: { label: string; value: number; accent?:
     </div>
   );
 }
+
+/** Reads a picked file as text, trying FileReader first (most reliable on Android), then Blob.text(). */
+function readFileText(f: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result ?? ""));
+    r.onerror = () => f.text().then(resolve, reject);
+    r.readAsText(f);
+  });
+}
