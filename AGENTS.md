@@ -32,3 +32,4 @@
 
 - Instant Model Catalog Loader calls admin-only `seed_model_catalog(_cat,_n,_photos)` in chunks of 250 (`chunks` in src/lib/modelCatalog.ts); photo links per category come from CDN asset pointers in src/assets/seed, colours/sizes are fixed in the database function. Why: instant, no scraping or network checks.
 - Carousels and banners use native CSS scroll-snap with no timers/animation loops, product cards do no layout reads on pointer move, and lists render 24 at a time. Why: continuous loops froze low-end phones.
+- Bulk file import (/admin/import) parses CSV/JSON in the browser via pure helpers in `src/lib/fileImport.ts` and skips any row whose `dedupeKey(source_url)` (normalised link, or `sku:<id>` when no link) already exists, re-checking right before insert. Why: no duplicate products from repeated exports.
