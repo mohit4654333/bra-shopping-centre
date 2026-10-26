@@ -72,9 +72,9 @@ function pick(row: Row, aliases: string[]): unknown {
 export function toList(v: unknown): string[] {
   if (v == null || v === "") return [];
   if (Array.isArray(v)) {
-    return v.flatMap((x) => (x && typeof x === "object" ? [String((x as Row).url ?? (x as Row).src ?? (x as Row).name ?? (x as Row).value ?? "")] : toList(x)));
+    return v.flatMap((x) => (x && typeof x === "object" ? [String((x as Row)["url"] ?? (x as Row)["src"] ?? (x as Row)["name"] ?? (x as Row)["value"] ?? "")] : toList(x)));
   }
-  if (typeof v === "object") return toList((v as Row).url ?? (v as Row).src ?? (v as Row).name);
+  if (typeof v === "object") return toList((v as Row)["url"] ?? (v as Row)["src"] ?? (v as Row)["name"]);
   const s = String(v).trim();
   if (s.startsWith("[")) { try { return toList(JSON.parse(s)); } catch { /* fall through */ } }
   return s.split(/\s*[;,|\n]\s*/).map((x) => x.trim()).filter(Boolean);
@@ -101,7 +101,7 @@ export function dedupeKey(sourceUrl: string): string {
   }
 }
 
-export type MappedRow = { product: ImportedProduct; key: string; problem?: string };
+export type MappedRow = { product: ImportedProduct; key: string; problem?: string | undefined };
 
 export function mapRow(row: Row, categoryIds: string[]): MappedRow {
   const name = String(pick(row, ["title", "name", "product_name", "productName", "productTitle"]) ?? "").trim();

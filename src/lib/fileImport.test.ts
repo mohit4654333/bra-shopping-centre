@@ -18,7 +18,7 @@ describe("file importer", () => {
 
   it("parses quoted CSV fields", () => {
     const rows = parseCsv('title,images\n"Bra, red","https://a.com/1.jpg,https://a.com/2.jpg"\n');
-    expect(rows[0]!.title).toBe("Bra, red");
+    expect(rows[0]!["title"]).toBe("Bra, red");
   });
 
   it("skips products already in the store by url and repeats in the file", () => {
