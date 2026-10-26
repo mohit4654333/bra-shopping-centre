@@ -48,11 +48,18 @@ function ImportPage() {
   const [done, setDone] = useState(0);
   const [saved, setSaved] = useState<number | null>(null);
 
-  const onFile = async (f: File | undefined) => {
+  const onFile = async (input: HTMLInputElement) => {
+    const f = input.files?.[0];
     if (!f) return;
+    // Read the file BEFORE touching the input or state — Android drops access to the
+    // picked file once the input is cleared/disabled ("requested file could not be found").
+    let text: string;
+    try { text = await readFileText(f); }
+    catch { toast.error("Phone ne file open nahi karne di. File ko Downloads me save karke dobara choose karein."); input.value = ""; return; }
+    input.value = "";
     setBusy(true); setPlan(null); setSaved(null); setDone(0); setFileName(f.name);
     try {
-      const rows = parseFile(f.name, await f.text());
+      const rows = parseFile(f.name, text);
       if (!rows.length) throw new Error("No products found in this file");
       const [keys, cats] = await Promise.all([loadExistingKeys(), supabase.from("categories").select("id")]);
       setPlan(planImport(rows, keys, (cats.data ?? []).map((c) => c.id)));
@@ -98,7 +105,7 @@ function ImportPage() {
         <FileUp className="h-8 w-8 text-primary" />
         <span className="font-medium">{fileName || "Tap to choose a CSV or JSON file"}</span>
         <span className="text-xs text-muted-foreground">Works from phone storage too</span>
-        <input type="file" accept=".csv,.json,.jsonl,text/csv,application/json" className="hidden" disabled={busy} onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ""; }} />
+        <input type="file" accept=".csv,.json,.jsonl,text/csv,text/comma-separated-values,application/json,application/vnd.ms-excel,text/plain" className="hidden" onChange={(e) => { if (!busy) void onFile(e.currentTarget); }} />
       </label>
 
       {busy && !plan && <div className="mt-6 flex items-center gap-2 text-sm"><Loader2 className="h-4 w-4 animate-spin" /> Reading file and checking for duplicates…</div>}
@@ -153,4 +160,14 @@ function Stat({ label, value, accent }: { label: string; value: number; accent?:
       <div className="text-xs text-muted-foreground">{label}</div>
     </div>
   );
+}
+
+/** Reads a picked file as text, trying FileReader first (most reliable on Android), then Blob.text(). */
+function readFileText(f: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result ?? ""));
+    r.onerror = () => f.text().then(resolve, reject);
+    r.readAsText(f);
+  });
 }
