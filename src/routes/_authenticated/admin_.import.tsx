@@ -48,6 +48,21 @@ function ImportPage() {
   const [done, setDone] = useState(0);
   const [saved, setSaved] = useState<number | null>(null);
 
+  const [pasted, setPasted] = useState("");
+  const [link, setLink] = useState("");
+
+  const processText = async (name: string, text: string) => {
+    setBusy(true); setPlan(null); setSaved(null); setDone(0); setFileName(name);
+    try {
+      const rows = parseFile(name, text);
+      if (!rows.length) throw new Error("No products found in this file");
+      const [keys, cats] = await Promise.all([loadExistingKeys(), supabase.from("categories").select("id")]);
+      setPlan(planImport(rows, keys, (cats.data ?? []).map((c) => c.id)));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not read file");
+    } finally { setBusy(false); }
+  };
+
   const onFile = async (input: HTMLInputElement) => {
     const f = input.files?.[0];
     if (!f) return;
@@ -55,17 +70,32 @@ function ImportPage() {
     // picked file once the input is cleared/disabled ("requested file could not be found").
     let text: string;
     try { text = await readFileText(f); }
-    catch { toast.error("Phone ne file open nahi karne di. File ko Downloads me save karke dobara choose karein."); input.value = ""; return; }
+    catch { toast.error("Phone ne file open nahi karne di. Neeche 'Paste' ya 'Link' option use karein."); input.value = ""; return; }
     input.value = "";
-    setBusy(true); setPlan(null); setSaved(null); setDone(0); setFileName(f.name);
+    await processText(f.name, text);
+  };
+
+  const onPaste = () => {
+    const t = pasted.trim();
+    if (!t) { toast.error("Pehle CSV/JSON text paste karein"); return; }
+    void processText(t.startsWith("[") || t.startsWith("{") ? "pasted.json" : "pasted.csv", t);
+  };
+
+  const onLink = async () => {
+    const u = link.trim();
+    if (!/^https?:\/\//i.test(u)) { toast.error("Sahi link daalein (https://...)"); return; }
+    setBusy(true);
     try {
-      const rows = parseFile(f.name, text);
-      if (!rows.length) throw new Error("No products found in this file");
-      const [keys, cats] = await Promise.all([loadExistingKeys(), supabase.from("categories").select("id")]);
-      setPlan(planImport(rows, keys, (cats.data ?? []).map((c) => c.id)));
+      const res = await fetch(u);
+      if (!res.ok) throw new Error(`Link se file nahi mili (${res.status})`);
+      const text = await res.text();
+      const isJson = /json/i.test(res.headers.get("content-type") ?? "") || /format=json|\.jsonl?(\?|$)/i.test(u) || /^\s*[[{]/.test(text);
+      setBusy(false);
+      await processText(isJson ? "link.json" : "link.csv", text);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not read file");
-    } finally { setBusy(false); }
+      setBusy(false);
+      toast.error(e instanceof Error ? e.message : "Link se file nahi mili");
+    }
   };
 
   const save = async () => {
@@ -107,6 +137,20 @@ function ImportPage() {
         <span className="text-xs text-muted-foreground">Works from phone storage too</span>
         <input type="file" accept=".csv,.json,.jsonl,text/csv,text/comma-separated-values,application/json,application/vnd.ms-excel,text/plain" className="hidden" onChange={(e) => { if (!busy) void onFile(e.currentTarget); }} />
       </label>
+
+      <div className="mt-4 space-y-2 rounded-lg border border-border p-4">
+        <p className="text-sm font-medium">Or import from a link (Apify CSV/JSON export link)</p>
+        <div className="flex gap-2">
+          <input value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://api.apify.com/v2/datasets/.../items?format=csv" className="min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm" />
+          <Button disabled={busy} onClick={() => void onLink()}>Load</Button>
+        </div>
+      </div>
+
+      <div className="mt-4 space-y-2 rounded-lg border border-border p-4">
+        <p className="text-sm font-medium">Or paste CSV / JSON text</p>
+        <textarea value={pasted} onChange={(e) => setPasted(e.target.value)} rows={5} placeholder="title,price,images,url..." className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-xs" />
+        <Button disabled={busy} onClick={onPaste}>Scan pasted text</Button>
+      </div>
 
       {busy && !plan && <div className="mt-6 flex items-center gap-2 text-sm"><Loader2 className="h-4 w-4 animate-spin" /> Reading file and checking for duplicates…</div>}
 
