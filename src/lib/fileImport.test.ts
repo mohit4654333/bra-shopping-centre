@@ -33,3 +33,14 @@ describe("file importer", () => {
     expect(mapRow({ name: "A", price: 1, sku: "ABC", images: "https://a.com/1.jpg" }, []).product.source_url).toBe("sku:ABC");
   });
 });
+
+describe("apify exports", () => {
+  it("reads images/0 columns and falls back to a name id", async () => {
+    const { parseCsv, mapRow } = await import("./fileImport");
+    const rows = parseCsv('title,price,images/0,images/1\nLace Bra,499,https://a.com/1.jpg,https://a.com/2.jpg\n');
+    const m = mapRow(rows[0]!, []);
+    expect(m.problem).toBeUndefined();
+    expect(m.product.images.length).toBe(2);
+    expect(m.product.source_url).toBe("sku:lace-bra");
+  });
+});

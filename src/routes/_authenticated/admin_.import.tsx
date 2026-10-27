@@ -149,7 +149,10 @@ function ImportPage() {
       <div className="mt-4 space-y-2 rounded-lg border border-border p-4">
         <p className="text-sm font-medium">Or paste CSV / JSON text</p>
         <textarea value={pasted} onChange={(e) => setPasted(e.target.value)} rows={5} placeholder="title,price,images,url..." className="w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-xs" />
-        <Button disabled={busy} onClick={onPaste}>Scan pasted text</Button>
+        <div className="flex gap-2">
+          <Button disabled={busy} onClick={onPaste}>Scan pasted text</Button>
+          <Button variant="destructive" disabled={busy} onClick={() => { setPasted(""); setPlan(null); setSaved(null); setDone(0); setFileName(""); }}>Clear</Button>
+        </div>
       </div>
 
       {busy && !plan && <div className="mt-6 flex items-center gap-2 text-sm"><Loader2 className="h-4 w-4 animate-spin" /> Reading file and checking for duplicates…</div>}
