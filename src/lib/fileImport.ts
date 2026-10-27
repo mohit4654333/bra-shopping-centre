@@ -103,17 +103,35 @@ export function dedupeKey(sourceUrl: string): string {
 
 export type MappedRow = { product: ImportedProduct; key: string; problem?: string | undefined };
 
+/** Apify-style split columns: "images/0", "images/1/url", "images.0" -> list of values. */
+export function gatherSplit(row: Row, bases: string[]): string[] {
+  const out: string[] = [];
+  const nb = bases.map(norm);
+  for (const k of Object.keys(row)) {
+    const m = k.match(/^(.+?)[/.](\d+)(?:[/.](url|src|href|link|value|name))?$/i);
+    if (!m || !nb.includes(norm(m[1]))) continue;
+    const v = row[k];
+    if (v !== undefined && v !== null && v !== "") out.push(String(v).trim());
+  }
+  return out;
+}
+
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 80);
+
 export function mapRow(row: Row, categoryIds: string[]): MappedRow {
-  const name = String(pick(row, ["title", "name", "product_name", "productName", "productTitle"]) ?? "").trim();
-  const url = String(pick(row, ["url", "productUrl", "product_url", "link", "productLink"]) ?? "").trim();
-  const id = String(pick(row, ["product_id", "productId", "sku", "id", "styleCode"]) ?? "").trim();
-  const source_url = url || (id ? `sku:${id}` : "");
-  const sale = parsePrice(pick(row, ["currentPrice", "offer_price", "offerPrice", "salePrice", "sellingPrice", "price", "price.current", "finalPrice"]));
-  const mrp = parsePrice(pick(row, ["originalPrice", "mrp", "listPrice", "old_price", "compareAtPrice", "price.original"]));
+  const name = String(pick(row, ["title", "name", "product_name", "productName", "productTitle", "product/title", "product/name"]) ?? "").trim();
+  const url = String(pick(row, ["url", "productUrl", "product_url", "link", "productLink", "canonicalUrl", "pageUrl", "product/url"]) ?? "").trim();
+  const id = String(pick(row, ["product_id", "productId", "sku", "id", "styleCode", "asin", "itemId"]) ?? "").trim();
+  const source_url = url || (id ? `sku:${id}` : name ? `sku:${slugify(name)}` : "");
+  const sale = parsePrice(pick(row, ["currentPrice", "offer_price", "offerPrice", "salePrice", "sellingPrice", "price", "price.current", "price/current", "price/value", "finalPrice", "discountedPrice"]));
+  const mrp = parsePrice(pick(row, ["originalPrice", "mrp", "listPrice", "old_price", "compareAtPrice", "price.original", "price/original", "regularPrice"]));
   const price = sale || mrp;
-  const images = sanitizeImages(
-    toImageList(pick(row, ["images", "imageUrls", "image_urls", "gallery", "photos", "image", "imageUrl", "image_url", "thumbnail", "mainImage"])).map((u) => (u.startsWith("//") ? `https:${u}` : u)),
-  );
+  const imgBases = ["images", "imageUrls", "image_urls", "gallery", "photos", "image", "imageUrl", "media"];
+  const rawImgs = [
+    ...toImageList(pick(row, [...imgBases, "image_url", "thumbnail", "mainImage", "displayImage", "photo", "img"])),
+    ...gatherSplit(row, imgBases).flatMap((v) => toImageList(v)),
+  ];
+  const images = sanitizeImages([...new Set(rawImgs.map((u) => (u.startsWith("//") ? `https:${u}` : u)))]);
   const description = String(pick(row, ["description", "productDescription", "details", "desc"]) ?? "").trim();
   const rawCat = String(pick(row, ["category", "categoryName", "productType", "type"]) ?? "").trim();
   const catSlug = rawCat.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
