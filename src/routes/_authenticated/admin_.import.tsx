@@ -77,13 +77,13 @@ function ImportPage() {
 
   const onPaste = () => {
     const t = pasted.trim();
-    if (!t) return toast.error("Pehle CSV/JSON text paste karein");
+    if (!t) { toast.error("Pehle CSV/JSON text paste karein"); return; }
     void processText(t.startsWith("[") || t.startsWith("{") ? "pasted.json" : "pasted.csv", t);
   };
 
   const onLink = async () => {
     const u = link.trim();
-    if (!/^https?:\/\//i.test(u)) return toast.error("Sahi link daalein (https://...)");
+    if (!/^https?:\/\//i.test(u)) { toast.error("Sahi link daalein (https://...)"); return; }
     setBusy(true);
     try {
       const res = await fetch(u);
