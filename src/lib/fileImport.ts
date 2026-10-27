@@ -136,8 +136,8 @@ export function mapRow(row: Row, categoryIds: string[]): MappedRow {
   const rawCat = String(pick(row, ["category", "categoryName", "productType", "type"]) ?? "").trim();
   const catSlug = rawCat.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const category = categoryIds.includes(catSlug) ? catSlug : guessCategory(`${rawCat} ${name}`);
-  const sizes = [...new Set(toList(pick(row, ["sizes", "size", "availableSizes", "variants.size"])))];
-  const colors = [...new Set(toList(pick(row, ["colors", "colours", "color", "colour"])))].map((c) => ({ name: c, hex: colorNameToHex(c), images: [] as string[] }));
+  const sizes = [...new Set(toList(pick(row, ["sizes", "size", "availableSizes", "variants.size"])), ...gatherSplit(row, ["sizes", "size", "availableSizes"])])];
+  const colors = [...new Set(toList(pick(row, ["colors", "colours", "color", "colour"])), ...gatherSplit(row, ["colors", "colours", "color"])])].map((c) => ({ name: c, hex: colorNameToHex(c), images: [] as string[] }));
   const product = cleanBrands<ImportedProduct>(
     {
       name, brand: STORE_BRAND, category, price, old_price: mrp > price ? mrp : price, description,
