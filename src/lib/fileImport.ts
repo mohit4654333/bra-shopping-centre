@@ -109,7 +109,7 @@ export function gatherSplit(row: Row, bases: string[]): string[] {
   const nb = bases.map(norm);
   for (const k of Object.keys(row)) {
     const m = k.match(/^(.+?)[/.](\d+)(?:[/.](url|src|href|link|value|name))?$/i);
-    if (!m || !nb.includes(norm(m[1]))) continue;
+    if (!m || !nb.includes(norm(m[1] ?? ""))) continue;
     const v = row[k];
     if (v !== undefined && v !== null && v !== "") out.push(String(v).trim());
   }
