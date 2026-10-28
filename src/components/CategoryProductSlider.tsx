@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
+import { useAutoSlide } from "@/lib/autoslide";
 import { Link } from "@tanstack/react-router";
 import { type Category, type Product } from "@/lib/types";
 import { sliderPicks } from "@/lib/merch";
@@ -29,10 +30,13 @@ export function CategoryProductSlider({ categories, products }: { categories: Ca
 }
 
 function CategoryRow({ label, items }: { label: string; items: Product[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useAutoSlide(ref, 3000);
   return (
     <div>
       <h2 className="mb-3 text-xl font-extrabold">Top {label}</h2>
       <div
+        ref={ref}
         className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none]"
       >
         {items.map((p) => (

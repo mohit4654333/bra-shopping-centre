@@ -3,6 +3,8 @@ import activeImg from "@/assets/cat-active.png";
 import type { Product } from "@/lib/types";
 import { discountOf } from "@/lib/merch";
 import { rankPhotos } from "@/lib/rotate";
+import { useRef } from "react";
+import { useAutoSlide } from "@/lib/autoslide";
 
 const TONES = ["bg-arch-mint", "bg-arch-peach", "bg-arch-sky", "bg-arch-lavender", "bg-arch-wine"];
 const BUILTIN: Record<string, string> = { nightwear: sleepImg, sleepwear: sleepImg, activewear: activeImg };
@@ -15,6 +17,8 @@ export function PosterCarousel({ tabs, products, onPick }: {
   products: Product[];
   onPick: (id: string) => void;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useAutoSlide(ref, 3500);
   const posters: Poster[] = tabs.map((t) => {
     const ph = rankPhotos(products, t.id, "even");
     const img = ph[0] ?? BUILTIN[t.id];
@@ -26,7 +30,7 @@ export function PosterCarousel({ tabs, products, onPick }: {
   return (
     <section className="bg-poster mt-5 py-6">
       <h2 className="px-4 text-center text-2xl font-black leading-tight text-primary md:text-3xl">Styles that bring GOOD LOOKS<br />to your festive fits</h2>
-      <div className="mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-4 pb-2 [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden">
+      <div ref={ref} className="mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-4 pb-2 [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden">
         {posters.map((p, k) => (
           <button key={p.id} type="button" onClick={() => onPick(p.id)} className="w-44 shrink-0 snap-start text-center md:w-56">
             <span className={`${TONES[k % TONES.length]} poster-frame relative flex aspect-[4/5] w-full items-end justify-center overflow-hidden`}>

@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useAutoSlide } from "@/lib/autoslide";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export type Banner = { id: string; title: string; subtitle: string; image: string; link_type: string; link_value: string };
@@ -9,6 +10,7 @@ export function BannerSlider({ banners }: { banners: Banner[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [i, setI] = useState(0);
   const n = banners.length;
+  useAutoSlide(ref, 4000, true);
   if (!n) return null;
   const go = (d: number) => {
     const el = ref.current;
