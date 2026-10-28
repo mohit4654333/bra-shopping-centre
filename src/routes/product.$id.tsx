@@ -128,7 +128,19 @@ function ProductPage() {
             </div>
           )}
         </div>
+        {st.show_sizes && p.sizes.length > 0 && (
+          <div className="rounded-xl border p-3">
+            <div className="mb-2 flex items-center justify-between"><p className="text-sm font-semibold">Size</p><SizeGuide /></div>
+            <div className="flex flex-wrap gap-2">
+              {p.sizes.map((s) => (
+                <button key={s} type="button" onClick={() => setSize(s)} className={`min-w-12 rounded-md border px-3 py-2 text-sm ${size === s ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary"}`}>{s}</button>
+              ))}
+            </div>
+          </div>
+        )}
+        </div>
       </div>
+
 
       <div className="min-w-0">
         <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{p.brand}</p>
