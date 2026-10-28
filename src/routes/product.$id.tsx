@@ -163,16 +163,6 @@ function ProductPage() {
           </div>
         )}
 
-        {st.show_sizes && p.sizes.length > 0 && (
-          <div className="mt-6">
-            <div className="mb-2 flex items-center justify-between"><p className="text-sm font-semibold">Size</p><SizeGuide /></div>
-            <div className="flex flex-wrap gap-2">
-              {p.sizes.map((s) => (
-                <button key={s} type="button" onClick={() => setSize(s)} className={`min-w-12 rounded-md border px-3 py-2 text-sm ${size === s ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary"}`}>{s}</button>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="mt-6 flex items-center gap-2">
           <div className="flex h-10 items-center rounded-full border bg-card">
