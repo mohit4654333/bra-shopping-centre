@@ -18,7 +18,7 @@ export function MusicPlayer() {
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [dur, setDur] = useState(0);
-  const wantRef = useRef(false); // user pressed Play
+  const wantRef = useRef(true); // music on by default
   const awayRef = useRef(false); // paused because page hidden
   const first = useRef(true);
 
@@ -35,6 +35,19 @@ export function MusicPlayer() {
     play();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i]);
+
+  // Default ON: browsers block sound until the first touch, so start on the first tap/scroll.
+  useEffect(() => {
+    const a = ref.current;
+    if (a) a.play().catch(() => {});
+    const start = () => {
+      if (wantRef.current && ref.current?.paused) play();
+      ["pointerdown", "touchstart", "keydown", "scroll"].forEach((ev) => window.removeEventListener(ev, start));
+    };
+    ["pointerdown", "touchstart", "keydown", "scroll"].forEach((ev) => window.addEventListener(ev, start, { once: true, passive: true }));
+    return () => ["pointerdown", "touchstart", "keydown", "scroll"].forEach((ev) => window.removeEventListener(ev, start));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Pause when minimised / tab changed, resume on return.
   useEffect(() => {

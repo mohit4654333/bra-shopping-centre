@@ -14,7 +14,7 @@ export function ArchCategories({ tabs, products, active, maxOff, onPick }: {
   maxOff: number | null;
   onPick: (id: string) => void;
 }) {
-  const tick = useTick();
+  const tick = useTick(2800);
   return (
     <div className="-mx-4 mt-4 flex items-start gap-3 overflow-x-auto px-4 pb-2 pt-1">
       {(
@@ -36,7 +36,7 @@ export function ArchCategories({ tabs, products, active, maxOff, onPick }: {
           <button key={t.id} type="button" onClick={() => onPick(t.id)} className="flex w-24 shrink-0 flex-col items-center gap-1.5">
             <span className={`${TONES[k % TONES.length]} relative flex h-28 w-24 items-end justify-center overflow-hidden rounded-b-2xl rounded-t-full ring-2 ring-offset-2 ring-offset-background ${active === t.id ? "ring-primary" : "ring-transparent"}`}>
               {img ? (
-                <img key={img} src={img} alt={t.label} loading="lazy" className={cutout ? "h-[95%] w-auto object-contain object-bottom" : "h-full w-full object-cover"} />
+                <img key={img} src={img} style={{ animation: "fade-in 0.6s ease" }} alt={t.label} loading="lazy" className={cutout ? "h-[95%] w-auto object-contain object-bottom" : "h-full w-full object-cover"} />
               ) : <span className="mb-8 text-3xl">✨</span>}
             </span>
             <span className="text-center text-[11px] font-bold uppercase tracking-wide">{LABELS[t.id] ?? t.label}</span>
