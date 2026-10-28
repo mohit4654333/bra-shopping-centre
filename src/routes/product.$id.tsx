@@ -85,15 +85,16 @@ function ProductPage() {
       <BackButton label="Back to Shop" />
     </div>
     <main className="mx-auto grid max-w-7xl grid-cols-1 gap-10 overflow-x-hidden px-4 py-6 md:grid-cols-2">
-      <div className="flex min-w-0 flex-col-reverse gap-3 md:flex-row">
-        <div className="flex min-w-0 max-w-full gap-2 overflow-x-auto md:max-h-[640px] md:w-20 md:flex-col md:overflow-y-auto">
+      <div className="flex min-w-0 flex-row gap-3 rounded-2xl border bg-card p-2">
+        <div className="flex max-h-[60vh] w-16 shrink-0 flex-col gap-2 overflow-y-auto md:max-h-[640px] md:w-20 [scrollbar-width:none]">
           {gallery.map((g, i) => (
-            <button key={g + i} type="button" onClick={() => setImg(i)} className={`w-16 shrink-0 overflow-hidden rounded-md border-2 md:w-full ${i === shown ? "border-primary" : "border-transparent"}`}>
-              <SafeImg src={g} onFail={markBroken} className="aspect-[2/3] w-full bg-card object-contain" />
+            <button key={g + i} type="button" onClick={() => setImg(i)} className={`w-full shrink-0 overflow-hidden rounded-xl border-2 ${i === shown ? "border-primary" : "border-border"}`}>
+              <SafeImg src={g} onFail={markBroken} className="aspect-[3/4] w-full bg-card object-cover" />
             </button>
           ))}
         </div>
-        <div className="relative mx-auto w-full max-w-[22rem] flex-1 touch-pan-y select-none self-start overflow-hidden overscroll-contain rounded-lg bg-muted md:max-w-none"
+        <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="relative w-full touch-pan-y select-none overflow-hidden overscroll-contain rounded-xl bg-muted"
           onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, start: shown, moved: false, horiz: null }; }}
           onPointerMove={(e) => {
             const d = drag.current; if (!d || gallery.length < 2) return;
