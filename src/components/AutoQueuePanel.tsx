@@ -160,7 +160,7 @@ export function AutoQueuePanel({ categories }: { categories: Category[] }) {
         <Zap className="h-5 w-5 text-primary" />
         <h2 className="text-xl font-semibold">Import Channels & Presets</h2>
       </div>
-      <p className="mt-1 text-sm text-muted-foreground">Save a category page once. Each click adds the next new products — already imported ones are skipped instantly, and the next run continues from the next page.</p>
+      <p className="mt-1 text-sm text-muted-foreground">Save a category page once. Start Non-Stop once and it keeps adding new products by itself — already imported ones are skipped instantly, and the next run continues from the next page.</p>
 
       {run && (
         <div className="mt-4 rounded-lg border bg-muted/40 p-4">
@@ -192,7 +192,7 @@ export function AutoQueuePanel({ categories }: { categories: Category[] }) {
           </>
         ) : (
           <>
-            <span className="text-sm text-muted-foreground">Ek click — saari categories ek saath, 10-10 karke non-stop. Browser band karne par bhi chalta rahega.</span>
+            <span className="text-sm text-muted-foreground">Ek click — saari categories non-stop, page-by-page jab tak category khatam na ho. Browser band karne par bhi chalta rahega.</span>
             <Button className="ml-auto" onClick={() => setPilotAll(true)}><Play className="mr-1 h-4 w-4" />Start Auto-Pilot</Button>
           </>
         )}
@@ -238,8 +238,7 @@ export function AutoQueuePanel({ categories }: { categories: Category[] }) {
               <p className="text-xs text-muted-foreground">Pages scanned: {c.last_scanned_page} · Imported: {c.imported_count} · Waiting: {c.pending_urls.length} · Last sync: {c.last_sync_timestamp ? new Date(c.last_sync_timestamp).toLocaleString() : "never"}</p>
               {c.autopilot && c.last_error && <p className="text-xs text-destructive">{c.last_error}</p>}
             </div>
-            <Button size="sm" variant={c.autopilot ? "destructive" : "secondary"} onClick={() => togglePilot(c)}>{c.autopilot ? "Auto-Pilot ON — stop" : "Auto-Pilot"}</Button>
-            <Button size="sm" onClick={() => start(c, 10)} disabled={busy}><Plus className="mr-1 h-4 w-4" />Next 10 {c.label}</Button>
+            <Button size="sm" variant={c.autopilot ? "destructive" : "secondary"} onClick={() => togglePilot(c)}>{c.autopilot ? "Non-stop ON — Stop" : "▶ Start Non-Stop"}</Button>
             <Button size="sm" variant="ghost" onClick={() => resetPage(c)} disabled={busy}>Restart from page 1</Button>
             <Button size="icon" variant="ghost" aria-label="Remove channel" onClick={() => removeChannel(c)} disabled={busy}><Trash2 className="h-4 w-4" /></Button>
           </div>
