@@ -23,7 +23,7 @@ export function MusicPlayer() {
   const first = useRef(true);
 
   const isAway = () => document.visibilityState !== "visible";
-  const userPaused = useRef(false); // set only by the Pause button; nothing else may restart music
+  const userPaused = useRef(false); // set only by the Pause button; nothing else may restart music (remembered across pages)
   const play = () => { const a = ref.current; if (a && wantRef.current && !userPaused.current && !isAway()) a.play().catch(() => {}); };
 
   // Track change: load new song, keep playing if user wants music.
@@ -39,8 +39,9 @@ export function MusicPlayer() {
 
   // Default ON: browsers block sound until the first touch, so start on the first tap/scroll.
   useEffect(() => {
+    try { if (localStorage.getItem("gb-music-paused") === "1") { userPaused.current = true; wantRef.current = false; } } catch { /* ignore */ }
     const a = ref.current;
-    if (a) a.play().catch(() => {});
+    if (a && !userPaused.current) a.play().catch(() => {});
     const start = () => {
       if (wantRef.current && !userPaused.current && ref.current?.paused) play();
       ["pointerdown", "touchstart", "keydown", "scroll"].forEach((ev) => window.removeEventListener(ev, start));
@@ -69,10 +70,10 @@ export function MusicPlayer() {
     e.stopPropagation();
     const a = ref.current;
     if (!a) return;
-    if (!a.paused) { wantRef.current = false; userPaused.current = true; awayRef.current = false; a.pause(); }
-    else { wantRef.current = true; userPaused.current = false; play(); }
+    if (!a.paused) { wantRef.current = false; userPaused.current = true; awayRef.current = false; a.pause(); try { localStorage.setItem("gb-music-paused", "1"); } catch { /* ignore */ } }
+    else { wantRef.current = true; userPaused.current = false; try { localStorage.removeItem("gb-music-paused"); } catch { /* ignore */ } play(); }
   };
-  const step = (d: number) => (e: React.MouseEvent) => { e.stopPropagation(); wantRef.current = true; userPaused.current = false; go(d); };
+  const step = (d: number) => (e: React.MouseEvent) => { e.stopPropagation(); wantRef.current = true; userPaused.current = false; try { localStorage.removeItem("gb-music-paused"); } catch { /* ignore */ } go(d); };
 
   return (
     <div className="relative z-20 flex h-full shrink-0 items-center gap-1 bg-foreground px-2 text-background">
@@ -84,8 +85,8 @@ export function MusicPlayer() {
         onLoadedMetadata={(e) => setDur(e.currentTarget.duration)}
         onEnded={() => go(1)}
         onError={() => { setPlaying(false); if (wantRef.current && !userPaused.current) go(1); }}
-        onStalled={(e) => { const a = e.currentTarget; if (wantRef.current && !userPaused.current) setTimeout(() => { if (a.paused || a.readyState < 3) { a.load(); play(); } }, 4000); }}
-        onPause={() => { setPlaying(false); const a = ref.current; if (a && wantRef.current && !userPaused.current && !isAway() && !a.ended) setTimeout(play, 1500); }}
+        onStalled={(e) => { const a = e.currentTarget; if (wantRef.current && !userPaused.current) setTimeout(() => { if (!userPaused.current && wantRef.current && (a.paused || a.readyState < 3)) { a.load(); play(); } }, 4000); }}
+        onPause={() => setPlaying(false)}
       />
       <button type="button" aria-label="Previous song" onClick={step(-1)} className={btn}><SkipBack className="h-4 w-4" /></button>
       <button type="button" aria-label={playing ? "Pause" : "Play"} onClick={toggle} className={btn}>
