@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Loader2, Play, Plus, Square, Trash2, Zap } from "lucide-react";
+import { Loader2, Play, Square, Trash2, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { importAndSave, scanChannel } from "@/lib/autoqueue.functions";
 import { IMPORT_CONCURRENCY, PILOT_BATCH, parseCommand, pool } from "@/lib/autoqueue";
