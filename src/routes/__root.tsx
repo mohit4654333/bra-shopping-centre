@@ -135,7 +135,6 @@ function StoreChrome() {
         <footer className="mt-16 border-t py-8 text-center text-xs text-muted-foreground">
           © {st.brand_name}
           <div className="mt-2 flex flex-wrap justify-center gap-4"><Link to="/track" className="underline hover:text-foreground">Order track karein</Link><Link to="/policies" className="underline hover:text-foreground">Packaging, Exchange & Contact</Link></div>
-          <div className="mt-2"><Link to="/admin" className="underline hover:text-foreground">Store Admin</Link></div>
         </footer>
     </>
   );

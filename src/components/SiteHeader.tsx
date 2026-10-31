@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ShoppingBag, Settings, Search } from "lucide-react";
+import { ShoppingBag, Search } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { listCategories } from "@/lib/products.functions";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -45,7 +45,6 @@ export function SiteHeader() {
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search bras, colours…" className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
             <button type="submit" aria-label="Search" className="text-muted-foreground"><Search className="h-5 w-5" /></button>
           </form>
-          <Link to="/admin" preload="intent" aria-label="Admin" className={round}><Settings className="h-5 w-5" /></Link>
           <WishlistButton className={round} />
           <button type="button" onClick={() => setOpen(true)} aria-label="Bag" className={round}>
             <ShoppingBag className="h-5 w-5" />
