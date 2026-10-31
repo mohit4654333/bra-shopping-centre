@@ -112,10 +112,19 @@ function AdminPage() {
     const ids = [...sel];
     if (!ids.length || !confirm(`Delete ${ids.length} products? This cannot be undone.`)) return;
     setDeleting(true);
+    const gone = new Set(ids);
+    qc.setQueriesData({ queryKey: ["admin-products"] }, (old: unknown) => Array.isArray(old) ? old.filter((x: Product) => !gone.has(x.id)) : old);
     try {
-      for (let k = 0; k < ids.length; k += 100) {
-        const { error } = await supabase.from("products").delete().in("id", ids.slice(k, k + 100));
+      const all = products.data && ids.length >= products.data.length;
+      if (all) {
+        const { error } = await supabase.rpc("clear_catalog");
         if (error) throw error;
+      } else {
+        const parts: string[][] = [];
+        for (let k = 0; k < ids.length; k += 200) parts.push(ids.slice(k, k + 200));
+        const res = await Promise.all(parts.map((c) => supabase.from("products").delete().in("id", c)));
+        const bad = res.find((r) => r.error);
+        if (bad?.error) throw bad.error;
       }
       toast.success(`${ids.length} products deleted`);
       setSel(new Set());
@@ -129,8 +138,9 @@ function AdminPage() {
 
   const remove = async (p: Product) => {
     if (!confirm(`Delete "${p.name}"?`)) return;
+    qc.setQueriesData({ queryKey: ["admin-products"] }, (old: unknown) => Array.isArray(old) ? old.filter((x: Product) => x.id !== p.id) : old);
     const { error } = await supabase.from("products").delete().eq("id", p.id);
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(error.message); qc.invalidateQueries(); return; }
     toast.success("Deleted");
     qc.invalidateQueries();
   };
