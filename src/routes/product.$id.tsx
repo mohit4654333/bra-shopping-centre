@@ -143,28 +143,38 @@ function ProductPage() {
 
 
       <div className="min-w-0">
-        <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{p.brand}</p>
-        <h1 className="mt-1 text-3xl font-semibold">{p.name}</h1>
-        <p className="mt-4 text-2xl"><b>{rupees(p.price)}</b>{off > 0 && <><span className="ml-3 text-base text-muted-foreground line-through">MRP {rupees(p.old_price)}</span><span className="ml-3 rounded-full bg-primary px-3 py-0.5 text-sm font-bold text-primary-foreground">{off}% OFF</span></>}</p>
+        <p className="text-sm font-bold md:font-semibold md:uppercase md:tracking-wide md:text-muted-foreground">{p.brand}</p>
+        <h1 className="mt-0.5 text-base font-normal text-muted-foreground md:mt-1 md:text-3xl md:font-semibold md:text-foreground">{p.name}</h1>
+        <p className="mt-2 text-xl md:mt-4 md:text-2xl"><b>{rupees(p.price)}</b>{off > 0 && <><span className="ml-2 text-sm text-muted-foreground line-through md:ml-3 md:text-base">MRP {rupees(p.old_price)}</span><span className="ml-2 text-sm font-bold text-primary md:ml-3 md:rounded-full md:bg-primary md:px-3 md:py-0.5 md:text-primary-foreground">{off}% OFF</span></>}</p>
         <p className="text-xs text-muted-foreground">Inclusive of all taxes</p>
 
         {st.show_colors && p.colors.length > 0 && (
           <div className="mt-6">
-            <p className="mb-2 text-sm font-semibold">Colour: <span className="font-normal">{color?.name}</span> <span className="text-muted-foreground">({p.colors.length} colours)</span></p>
-            <div className="flex flex-wrap gap-2">
+            <p className="mb-2 text-base font-semibold md:text-sm">Select Colour: <span className="font-normal">{color?.name}</span> <span className="text-muted-foreground">({p.colors.length})</span></p>
+            <div className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0 [scrollbar-width:none]">
               {p.colors.map((c, i) => (
                 <button key={c.name + i} type="button" onClick={() => pickColor(i)} title={c.name}
-                  className={`w-16 overflow-hidden rounded-md border-2 text-[10px] ${i === ci ? "border-primary" : "border-border"}`}>
+                  className={`w-20 shrink-0 overflow-hidden rounded-lg border-2 text-xs md:w-16 md:rounded-md md:text-[10px] ${i === ci ? "border-primary text-primary" : "border-border"}`}>
                   {c.images[0] ? <SafeImg src={c.images[0]} className="aspect-[3/4] w-full object-cover" /> : <span className="block aspect-[3/4] w-full" style={{ background: c.hex }} />}
-                  <span className="block truncate px-1 py-0.5">{c.name}</span>
+                  <span className="block truncate px-1 py-1">{c.name}</span>
                 </button>
               ))}
             </div>
           </div>
         )}
 
+        {st.show_sizes && p.sizes.length > 0 && (
+          <div className="mt-6 md:hidden">
+            <div className="mb-3 flex items-center justify-between"><p className="text-base font-semibold">Select Size</p><SizeGuide /></div>
+            <div className="flex flex-wrap gap-3">
+              {p.sizes.map((s) => (
+                <button key={s} type="button" onClick={() => setSize(s)} className={`grid h-12 min-w-12 place-items-center rounded-full border px-3 text-sm ${size === s ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>{s}</button>
+              ))}
+            </div>
+          </div>
+        )}
 
-        <div className="mt-6 flex items-center gap-2">
+        <div className="mt-6 hidden items-center gap-2 md:flex">
           <div className="flex h-10 items-center rounded-full border bg-card">
             <button type="button" aria-label="Kam karo" className="h-10 w-9 text-lg" onClick={() => setQty(Math.max(1, qty - 1))}>−</button>
             <span className="w-6 text-center text-sm font-semibold">{qty}</span>
