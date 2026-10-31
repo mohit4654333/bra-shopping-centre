@@ -50,7 +50,9 @@ async function scanShopify(sb: Sb, url: string, fromPage: number, count: number,
     const newOnes = rejectKnown(links, known);
     skipped += links.length - newOnes.length;
     fresh.push(...newOnes);
-    if (fresh.length >= count) break;
+    // Page has more new products than we take now: stay on it so the rest are picked up next scan.
+    if (fresh.length > count) { page--; break; }
+    if (fresh.length === count) break;
     links = await shopifyPage(url, page + 1);
   }
   return { fresh, skipped, page, ended };
