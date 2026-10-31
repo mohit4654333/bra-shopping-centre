@@ -174,3 +174,21 @@ export function pilotStep(ch: { pending_urls: string[]; dry_scans: number; last_
   if (ch.pending_urls.length) return { kind: "import", url: ch.pending_urls[0]! };
   return { kind: "scan", fromPage: ch.dry_scans >= PILOT_WRAP_AFTER ? 0 : ch.last_scanned_page };
 }
+
+/** Shopify stores expose every product as JSON: /collections/x/products.json (or /products.json) with 250 per page. */
+export function shopifyJsonUrl(base: string, page: number): string {
+  const u = new URL(base);
+  const m = u.pathname.match(/^(.*\/collections\/[^/?#]+)/i);
+  const path = m ? `${m[1]}/products.json` : "/products.json";
+  return `${u.origin}${path}?limit=250&page=${page}`;
+}
+
+/** Product page links from a Shopify products.json body; null when the body is not Shopify JSON. */
+export function shopifyLinks(body: string, base: string): string[] | null {
+  try {
+    const j = JSON.parse(body) as { products?: { handle?: string }[] };
+    if (!Array.isArray(j.products)) return null;
+    const origin = new URL(base).origin;
+    return j.products.filter((p) => p.handle).map((p) => `${origin}/products/${p.handle}`);
+  } catch { return null; }
+}
