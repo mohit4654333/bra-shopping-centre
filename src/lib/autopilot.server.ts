@@ -1,4 +1,4 @@
-import { canonicalUrl, extractProductLinks, findSubcategories, ignoresPaging, isPromoUrl, isRealProduct, listingVariants, pageUrl, pilotStep, PILOT_BATCH, rejectKnown, pool, IMPORT_CONCURRENCY } from "./autoqueue";
+import { canonicalUrl, extractProductLinks, findSubcategories, ignoresPaging, isPromoUrl, isRealProduct, listingVariants, pageUrl, pilotStep, PILOT_BATCH, rejectKnown, pool, IMPORT_CONCURRENCY, shopifyJsonUrl, shopifyLinks } from "./autoqueue";
 import { fetchListingHtml, runImport } from "./import.server";
 import { cleanBrands } from "./extract";
 import { STORE_BRAND, sanitizeImages } from "./types";
@@ -25,7 +25,39 @@ async function variantsFor(url: string, key: string): Promise<string[]> {
 export const SCAN_PARALLEL = 2;
 
 /** Scan listing pages after `fromPage` until `count` new product links are found (max `maxPages` pages), several pages at once. */
+async function shopifyPage(url: string, page: number): Promise<string[] | null> {
+  try {
+    const res = await fetch(shopifyJsonUrl(url, page), { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" }, signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    return shopifyLinks(await res.text(), url);
+  } catch { return null; }
+}
+
+/** Shopify fast path: 250 products per page straight from the store's JSON, no page HTML needed. Null = not a Shopify store. */
+async function scanShopify(sb: Sb, url: string, fromPage: number, count: number, maxPages: number) {
+  const first = await shopifyPage(url, fromPage + 1);
+  if (first === null) return null;
+  const fresh: string[] = [];
+  let skipped = 0, page = fromPage, ended = false, links: string[] | null = first;
+  while (links && page - fromPage < maxPages && fresh.length < count) {
+    page++;
+    if (!links.length) { ended = true; break; }
+    const known: string[] = [];
+    for (let i = 0; i < links.length; i += 200) {
+      const { data } = await sb.from("products").select("source_url").in("source_url", links.slice(i, i + 200).map(canonicalUrl));
+      known.push(...(data ?? []).map((r: { source_url: string }) => r.source_url));
+    }
+    const newOnes = rejectKnown(links, known);
+    skipped += links.length - newOnes.length;
+    fresh.push(...newOnes);
+    if (fresh.length >= count) break;
+    links = await shopifyPage(url, page + 1);
+  }
+  return { fresh, skipped, page, ended };
+}
+
 export async function scanPages(sb: Sb, url: string, fromPage: number, count: number, key: string, maxPages = 8) {
+  if (!ignoresPaging(url)) { const s = await scanShopify(sb, url, fromPage, count, maxPages); if (s) return s; }
   const fresh: string[] = [];
   const seen = new Set<string>();
   let skipped = 0, page = fromPage, emptyPages = 0, ended = false;
