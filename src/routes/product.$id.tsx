@@ -1,8 +1,8 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { getProduct } from "@/lib/products.functions";
+import { getProduct, listProducts } from "@/lib/products.functions";
 import { imagesForColor } from "@/lib/types";
 import { rupees, useCart } from "@/lib/cart";
 import { SafeImg } from "@/components/SafeImg";
@@ -12,8 +12,6 @@ import { ReviewsSection } from "@/components/ReviewsSection";
 import { LikeButton, ShareButtons } from "@/components/LikeShare";
 import { settingsQuery } from "@/lib/store.functions";
 import { ProductCard } from "@/components/ProductCard";
-import { listProducts } from "@/lib/products.functions";
-import { useQuery } from "@tanstack/react-query";
 import { SizeGuide } from "@/components/SizeGuide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
