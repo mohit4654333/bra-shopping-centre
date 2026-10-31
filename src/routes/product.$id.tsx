@@ -11,6 +11,9 @@ import { BackButton } from "@/components/BackButton";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { LikeButton, ShareButtons } from "@/components/LikeShare";
 import { settingsQuery } from "@/lib/store.functions";
+import { ProductCard } from "@/components/ProductCard";
+import { listProducts } from "@/lib/products.functions";
+import { useQuery } from "@tanstack/react-query";
 import { SizeGuide } from "@/components/SizeGuide";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
@@ -85,8 +88,8 @@ function ProductPage() {
       <BackButton label="Back to Shop" />
     </div>
     <main className="mx-auto grid max-w-7xl grid-cols-1 gap-4 overflow-x-hidden px-3 py-2 pb-24 md:gap-10 md:px-4 md:py-6 md:pb-6 md:grid-cols-2">
-      <div className="-mx-3 flex min-w-0 flex-row md:mx-0 md:gap-3 md:rounded-2xl md:border md:bg-card md:p-2">
-        <div className="hidden max-h-[640px] w-20 shrink-0 flex-col gap-2 overflow-y-auto md:flex [scrollbar-width:none]">
+      <div className="flex min-w-0 flex-row gap-2 md:mx-0 md:gap-3 md:rounded-2xl md:border md:bg-card md:p-2">
+        <div className="flex max-h-[52vh] w-14 shrink-0 flex-col gap-1.5 overflow-y-auto md:max-h-[640px] md:w-20 md:gap-2 [scrollbar-width:none]">
           {gallery.map((g, i) => (
             <button key={g + i} type="button" onClick={() => setImg(i)} className={`w-full shrink-0 overflow-hidden rounded-xl border-2 ${i === shown ? "border-primary" : "border-border"}`}>
               <SafeImg src={g} onFail={markBroken} className="aspect-[3/4] w-full bg-card object-cover" />
@@ -94,7 +97,7 @@ function ProductPage() {
           ))}
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2 md:gap-3">
-        <div className="relative w-full touch-pan-y select-none overflow-hidden overscroll-contain bg-muted md:rounded-xl"
+        <div className="relative w-full touch-pan-y select-none overflow-hidden rounded-xl bg-muted"
           onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, start: shown, moved: false, horiz: null }; }}
           onPointerMove={(e) => {
             const d = drag.current; if (!d || gallery.length < 2) return;
@@ -114,7 +117,7 @@ function ProductPage() {
             else if (dx > 50) setImg((shown - 1 + gallery.length) % gallery.length);
           }}
           onPointerCancel={() => { drag.current = null; }}>
-          {gallery.length === 0 ? <div className="aspect-[3/4] w-full md:aspect-[2/3]" style={{ background: color?.hex }} aria-label={color?.name} /> : <SafeImg key={gallery[shown] ?? "none"} src={gallery[shown]} onFail={markBroken} alt={`${p.name} ${color?.name ?? ""}`} className="pointer-events-none mx-auto aspect-[3/4] w-full bg-card object-cover md:aspect-[2/3] md:object-contain" loading="eager" draggable={false} />}
+          {gallery.length === 0 ? <div className="aspect-[3/4] w-full md:aspect-[2/3]" style={{ background: color?.hex }} aria-label={color?.name} /> : <SafeImg key={gallery[shown] ?? "none"} src={gallery[shown]} onFail={markBroken} alt={`${p.name} ${color?.name ?? ""}`} className="pointer-events-none mx-auto aspect-[3/4] max-h-[52vh] w-full bg-card object-contain md:max-h-none md:aspect-[2/3]" loading="eager" draggable={false} />}
           {gallery.length > 1 && <span className="absolute bottom-3 right-3 rounded-full bg-card/90 px-2 py-0.5 text-xs">{shown + 1}/{gallery.length}</span>}
           {gallery.length > 2 && (
             <button type="button" onClick={() => setSpin((s) => !s)} onPointerDown={(e) => e.stopPropagation()}
@@ -214,6 +217,21 @@ function ProductPage() {
       </div>
     </main>
     <ReviewsSection productId={p.id} />
+    <SimilarProducts id={p.id} category={p.category} />
     </>
+  );
+}
+
+function SimilarProducts({ id, category }: { id: string; category: string }) {
+  const { data = [] } = useQuery({ queryKey: ["products"], queryFn: () => listProducts() });
+  const list = data.filter((x) => x.id !== id && x.category === category).slice(0, 12);
+  if (!list.length) return null;
+  return (
+    <section className="mx-auto max-w-7xl px-3 pb-28 pt-4 md:px-4 md:pb-10">
+      <h2 className="mb-3 text-lg font-semibold">You May Also Like</h2>
+      <div className="-mx-3 flex snap-x gap-3 overflow-x-auto px-3 pb-2 [scrollbar-width:none]">
+        {list.map((x) => <div key={x.id} className="w-40 shrink-0 snap-start md:w-52"><ProductCard p={x} /></div>)}
+      </div>
+    </section>
   );
 }
