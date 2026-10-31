@@ -173,6 +173,11 @@ function ProductPage() {
           <Button variant={st.buy_now ? "outline" : "default"} className="h-10 flex-1 rounded-full border-primary px-3 text-sm font-semibold text-primary" onClick={() => addToBag()}>Add to Bag</Button>
           {st.buy_now && <Button className="h-10 flex-1 rounded-full px-3 text-sm font-bold" onClick={() => addToBag(true)}>Buy Now</Button>}
         </div>
+        <div className="fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t bg-card p-2 shadow-lg md:hidden">
+          <div className="flex shrink-0 flex-col justify-center px-1 leading-tight"><b className="text-sm">{rupees(p.price)}</b>{size && <span className="text-[10px] text-muted-foreground">Size {size}</span>}</div>
+          <Button variant={st.buy_now ? "outline" : "default"} className="h-11 flex-1 rounded-full border-primary text-sm font-semibold text-primary" onClick={() => addToBag()}>Add to Bag</Button>
+          {st.buy_now && <Button className="h-11 flex-1 rounded-full text-sm font-bold" onClick={() => addToBag(true)}>Buy Now</Button>}
+        </div>
         <div className="mt-3 flex items-center gap-2">
           <LikeButton id={p.id} className="h-10 w-10 border shadow-none" />
           <ShareButtons name={p.name} price={rupees(p.price)} />
