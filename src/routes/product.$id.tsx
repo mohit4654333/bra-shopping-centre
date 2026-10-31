@@ -81,19 +81,19 @@ function ProductPage() {
 
   return (
     <>
-    <div className="mx-auto max-w-7xl px-4 pt-4">
+    <div className="mx-auto max-w-7xl px-3 pt-2 md:px-4 md:pt-4">
       <BackButton label="Back to Shop" />
     </div>
-    <main className="mx-auto grid max-w-7xl grid-cols-1 gap-10 overflow-x-hidden px-4 py-6 md:grid-cols-2">
-      <div className="flex min-w-0 flex-row gap-3 rounded-2xl border bg-card p-2">
-        <div className="flex max-h-[60vh] w-16 shrink-0 flex-col gap-2 overflow-y-auto md:max-h-[640px] md:w-20 [scrollbar-width:none]">
+    <main className="mx-auto grid max-w-7xl grid-cols-1 gap-4 overflow-x-hidden px-3 py-2 pb-24 md:gap-10 md:px-4 md:py-6 md:pb-6 md:grid-cols-2">
+      <div className="flex min-w-0 flex-row gap-2 rounded-2xl border bg-card p-1.5 md:gap-3 md:p-2">
+        <div className="flex max-h-[44vh] w-12 shrink-0 flex-col gap-2 overflow-y-auto md:max-h-[640px] md:w-20 [scrollbar-width:none]">
           {gallery.map((g, i) => (
             <button key={g + i} type="button" onClick={() => setImg(i)} className={`w-full shrink-0 overflow-hidden rounded-xl border-2 ${i === shown ? "border-primary" : "border-border"}`}>
               <SafeImg src={g} onFail={markBroken} className="aspect-[3/4] w-full bg-card object-cover" />
             </button>
           ))}
         </div>
-        <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-2 md:gap-3">
         <div className="relative w-full touch-pan-y select-none overflow-hidden overscroll-contain rounded-xl bg-muted"
           onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, start: shown, moved: false, horiz: null }; }}
           onPointerMove={(e) => {
@@ -114,7 +114,7 @@ function ProductPage() {
             else if (dx > 50) setImg((shown - 1 + gallery.length) % gallery.length);
           }}
           onPointerCancel={() => { drag.current = null; }}>
-          {gallery.length === 0 ? <div className="aspect-[2/3] w-full" style={{ background: color?.hex }} aria-label={color?.name} /> : <SafeImg key={gallery[shown] ?? "none"} src={gallery[shown]} onFail={markBroken} alt={`${p.name} ${color?.name ?? ""}`} className="pointer-events-none mx-auto aspect-[2/3] max-h-[60vh] w-full bg-card object-contain md:max-h-none" loading="eager" draggable={false} />}
+          {gallery.length === 0 ? <div className="aspect-[2/3] w-full" style={{ background: color?.hex }} aria-label={color?.name} /> : <SafeImg key={gallery[shown] ?? "none"} src={gallery[shown]} onFail={markBroken} alt={`${p.name} ${color?.name ?? ""}`} className="pointer-events-none mx-auto aspect-[2/3] max-h-[44vh] w-full bg-card object-contain md:max-h-none" loading="eager" draggable={false} />}
           {gallery.length > 1 && <span className="absolute bottom-3 right-3 rounded-full bg-card/90 px-2 py-0.5 text-xs">{shown + 1}/{gallery.length}</span>}
           {gallery.length > 2 && (
             <button type="button" onClick={() => setSpin((s) => !s)} onPointerDown={(e) => e.stopPropagation()}
@@ -129,11 +129,11 @@ function ProductPage() {
           )}
         </div>
         {st.show_sizes && p.sizes.length > 0 && (
-          <div className="rounded-xl border p-3">
+          <div className="rounded-xl border p-2 md:p-3">
             <div className="mb-2 flex items-center justify-between"><p className="text-sm font-semibold">Size</p><SizeGuide /></div>
             <div className="flex flex-wrap gap-2">
               {p.sizes.map((s) => (
-                <button key={s} type="button" onClick={() => setSize(s)} className={`min-w-12 rounded-md border px-3 py-2 text-sm ${size === s ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary"}`}>{s}</button>
+                <button key={s} type="button" onClick={() => setSize(s)} className={`min-w-11 rounded-md border px-2.5 py-1.5 text-sm md:px-3 md:py-2 ${size === s ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary"}`}>{s}</button>
               ))}
             </div>
           </div>
