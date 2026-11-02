@@ -120,6 +120,18 @@ function RootComponent() {
 
 function StoreChrome() {
   const { data: st } = useSuspenseQuery(settingsQuery);
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  // Admin and sign-in screens stay separate from the shop: no header, cart, chat or popups.
+  const isAdmin = path.startsWith("/admin") || path.startsWith("/auth");
+  if (isAdmin) {
+    return (
+      <>
+        <style>{themeCss(st.theme)}</style>
+        <div className="relative z-10"><Outlet /></div>
+        <Toaster richColors position="top-center" />
+      </>
+    );
+  }
   return (
     <>
         <style>{themeCss(st.theme)}</style>

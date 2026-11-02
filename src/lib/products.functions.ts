@@ -19,10 +19,17 @@ export function publicClient() {
 }
 
 export const listProducts = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await publicClient().from("products").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false });
-  if (error) throw new Error(error.message);
+  const sb = publicClient();
+  const data: Parameters<typeof normalizeProduct>[0][] = [];
+  // Paged: the database returns at most 1000 rows per request.
+  for (let from = 0; ; from += 1000) {
+    const { data: page, error } = await sb.from("products").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false }).order("id").range(from, from + 999);
+    if (error) throw new Error(error.message);
+    data.push(...((page ?? []) as typeof data));
+    if (!page || page.length < 1000) break;
+  }
   // List view only needs a few photos per colour; full galleries load on the product page.
-  return (data ?? []).map(normalizeProduct).map((p) => ({
+  return data.map(normalizeProduct).map((p) => ({
     ...p,
     images: p.images.slice(0, 3),
     colors: p.colors.slice(0, 12).map((c) => ({ ...c, images: c.images.slice(0, 2) })),
