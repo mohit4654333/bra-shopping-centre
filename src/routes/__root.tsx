@@ -72,7 +72,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" },
     ],
@@ -147,7 +147,7 @@ function StoreChrome() {
         <Toaster richColors position="top-center" />
         <footer className="mt-16 border-t py-8 text-center text-xs text-muted-foreground">
           © {st.brand_name}
-          <div className="mt-2 flex flex-wrap justify-center gap-4"><Link to="/track" className="underline hover:text-foreground">Order track karein</Link><Link to="/policies" className="underline hover:text-foreground">Packaging, Exchange & Contact</Link></div>
+          <div className="mt-2 flex flex-wrap justify-center gap-4"><Link to="/track" className="underline hover:text-foreground">Order track karein</Link><Link to="/policies" className="underline hover:text-foreground">Packaging, Exchange & Contact</Link><Link to="/privacy" className="underline hover:text-foreground">Privacy Policy</Link><Link to="/policies" className="underline hover:text-foreground">Return & Refund Policy</Link></div>
         </footer>
     </>
   );
