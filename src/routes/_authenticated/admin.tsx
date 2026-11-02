@@ -63,9 +63,15 @@ function AdminPage() {
   const products = useQuery({
     queryKey: ["admin-products"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("products").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false });
-      if (error) throw error;
-      return data.map(normalizeProduct);
+      // Paged: the database returns at most 1000 rows per request.
+      const all: unknown[] = [];
+      for (let from = 0; ; from += 1000) {
+        const { data, error } = await supabase.from("products").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false }).order("id").range(from, from + 999);
+        if (error) throw error;
+        all.push(...(data ?? []));
+        if (!data || data.length < 1000) break;
+      }
+      return (all as Parameters<typeof normalizeProduct>[0][]).map(normalizeProduct);
     },
   });
   const cats = useQuery({
