@@ -8,6 +8,7 @@ import { useCart } from "@/lib/cart";
 import { settingsQuery } from "@/lib/store.functions";
 import { WishlistButton } from "./WishlistButton";
 import { MusicPlayer } from "./MusicPlayer";
+import logo from "@/assets/logo.png";
 
 const round = "relative grid h-11 w-11 shrink-0 place-items-center rounded-full bg-card text-foreground shadow-sm hover:bg-accent";
 
@@ -39,8 +40,8 @@ export function SiteHeader() {
             onSubmit={(e) => { e.preventDefault(); navigate({ to: "/", search: q.trim() ? { q: q.trim() } : {}, hash: "shop" }); }}
             className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-xl bg-card px-2 shadow-sm"
           >
-            <Link to="/" aria-label={st.brand_name} className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary font-display text-lg font-bold text-primary-foreground">
-              {st.brand_name.charAt(0)}
+            <Link to="/" aria-label={st.brand_name} className="shrink-0">
+              <img src={logo} alt={st.brand_name} width={1152} height={576} className="h-9 w-auto" />
             </Link>
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search bras, colours…" className="min-w-0 flex-1 bg-transparent text-sm outline-none" />
             <button type="submit" aria-label="Search" className="text-muted-foreground"><Search className="h-5 w-5" /></button>
