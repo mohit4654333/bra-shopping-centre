@@ -59,6 +59,7 @@ function ProductPage() {
   const [broken, setBroken] = useState<Set<string>>(new Set());
   const markBroken = (u: string) => setBroken((b) => new Set(b).add(u));
   useEffect(() => { setImg(0); }, [ci]);
+  useEffect(() => { if (p) track("ViewContent", { value: p.price, content_ids: [p.id], content_name: p.name, content_type: "product" }); }, [p?.id]);
   if (!p) return null;
   const gallery = imagesForColor(p, ci).filter((u) => !broken.has(u));
   const shown = Math.min(img, Math.max(0, gallery.length - 1));

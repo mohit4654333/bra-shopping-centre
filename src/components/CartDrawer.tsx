@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { rupees, upiLink, useCart } from "@/lib/cart";
+import { track } from "@/lib/pixel";
 import { placeOrder, settingsQuery } from "@/lib/store.functions";
 import { SafeImg } from "./SafeImg";
 import { QRCodeSVG } from "qrcode.react";
@@ -52,6 +53,7 @@ export function CartDrawer() {
       return;
     }
     setBusy(false);
+    track("Purchase", { value: order.total, content_ids: items.map((i) => i.id), content_type: "product", num_items: items.reduce((s, i) => s + i.qty, 0) }, `order-${order.id}`);
     const link = upiLink(order.total, `Order ${order.id.slice(0, 8)} ${d.phone}`, st.upi_id, st.upi_name || st.brand_name);
     setPaid({ link, total: order.total, code: order.id.slice(0, 8) });
     clear();

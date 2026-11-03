@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { track } from "./pixel";
 
 export type CartItem = {
   key: string; id: string; name: string; price: number; image: string; color: string; size: string; qty: number;
@@ -23,11 +24,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
   const save = (next: CartItem[]) => { setItems(next); localStorage.setItem(KEY, JSON.stringify(next)); };
   const value: Cart = {
-    items, open, setOpen, step, setStep,
+    items, open, setOpen, step,
+    setStep: (s) => {
+      if (s === "details" && step !== "details") {
+        track("InitiateCheckout", { value: items.reduce((t, x) => t + x.price * x.qty, 0), content_ids: items.map((x) => x.id), content_type: "product", num_items: items.reduce((t, x) => t + x.qty, 0) });
+      }
+      setStep(s);
+    },
     add: (i, qty = 1) => {
       const key = `${i.id}|${i.color}|${i.size}`;
       const ex = items.find((x) => x.key === key);
       save(ex ? items.map((x) => (x.key === key ? { ...x, qty: x.qty + qty } : x)) : [...items, { ...i, key, qty }]);
+      track("AddToCart", { value: i.price * qty, content_ids: [i.id], content_name: i.name, content_type: "product" });
       setOpen(true);
     },
     setQty: (key, qty) => save(qty <= 0 ? items.filter((x) => x.key !== key) : items.map((x) => (x.key === key ? { ...x, qty } : x))),
